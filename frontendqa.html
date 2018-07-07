@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <title>Вопросы</title>
+</head>
+<body>
+  <nav>
+    <article>
+      <header>
+        <h1>Оглавление</h1>  
+      </header>
+      <main>
+        <ul>
+          <li><a href="#JS">JavaScript</a></li>
+          <li><a href="#HTML">HTML</a></li>
+          <li><a href="#CSS">CSS</a></li>
+        </ul>
+      </main>
+    </article>
+  </nav>
+  <article id="JS">
+    <header>
+      <h2>JavaScript</h2>
+      <ol>
+        <li>
+          <div class="question">Какие основные особенности JS? Отличия от других языков программирования.</div>
+          <div class="answer">Не строгая типизация, особый подход к наследованию, интерпритируемый(не компилируемый) язык. Все переменные технически это объекты(имеют ObjectWrapper). пример: "рандомный текст".length // вернет число символов в строке</div>
+        </li>
+        <li>
+          <div class="question">Расскажите про классы и наследование в JS</div>
+          <div class="answer">
+            Насследование в JS реализовано через ссылку на класс родитель, то есть <code>"text".__proto__ // String</code>
+            Если интерпритатор не находит свойство или метод у объекта он ищет его в __proto__, если её и там нет, то ищет в __proto__.__proto, и т.д. Экземпляр класса создается с помощью new
+            В es6 добавили синтаксис классов:
+            <code>
+'use strict'
+class Animal {
+  constructor (name) {
+    this.name = name;
+  }
+  run () {
+    this.speed = this.runSpeed
+    console.log('%s now is moving with speed %d', this.name, this.speed)
+  }
+  stop () {
+    this.speed = 0
+    console.log('%s now is stoped', this.name, this.speed)
+  }
+  static get className () {
+    return 'Animal'
+  }
+  static compare (animal1, animal2) {
+    console.log('%s faster then %s',
+      (animal1.speed > animal2.speed ? animal1.name : animal2.name),
+      (animal1.speed < animal2.speed ? animal1.name : animal2.name))
+  }
+}
+Animal.prototype.runSpeed = 12  // в классе нельзя указывать свойства, 
+                                // они задаются через свойство prototype
+class Rabit extends Animal {
+  constructor (name) {
+    super()// чтобы обратиться к this, сначала нужно вызвать super()
+    this.name = 'Rabit ' + name
+  }
+  jump () {
+    console.log('%s make jsump', this.name)
+  }
+  static get className () {
+    return 'Rabit'
+  }
+}
+Rabit.prototype.runSpeed = 10
+var bunny = new Rabit('Bunny') 
+var jerry = new Animal('Jerry') 
+bunny.run() // Rabit Bunny now is moving with speed 10
+jerry.run() // Jerry now is moving with speed 12
+Animal.compare(bunny, jerry) // Jerry faster then Rabit Bunny
+Animal.className // Animal
+Rabit.className // Rabit
+            </code>
+          </div>
+        </li>
+        <li>
+          <div class="question">Что такое область видимости, как вы понимаете замыкания в JS?</div>
+          <div class="answer">
+            Область видимости переменной - контекст в котором существует переменная. Может быть локальной и глобальной. В браузере глобальные переменные технически это свойства объекта window.
+            При инициализации каждой функции интерпритатор создает скрытое свойство LexicalEnvironment, в которое записываются все переменные, агрументы и функции описаные внутри неё. Так же создается скрытое свойство [[Scope]], которое ссылается на LexicalEnvironment функции в которой инициализирется данная функция. При вызове переменной внитри функции интерпритатор сначала ищет её значение внутри LexicalEnvironment, а затем в [[Scope]]. Область видимости ограничевается только функция, а не блоками кода типа if.
+            Таким образом замыкание это когда функция возвращает функцию, которая замкнута на LexicalEnvironment функции в которой создана.
+            Например:
+            <code>
+var makeCounter = function () {
+  var count = 1
+  return function () {
+    return count++
+  }
+}
+var counter1 = makeCounter()
+var counter2 = makeCounter()
+            </code>
+            counter1() и counter2() будут возвращать количество их запусков соотвественно и не зависимо друг от друга, т.к. инициализированы в разных Областях видимости.
+          </div>
+        </li>
+        <li>
+          <div class="question">
+            В чем разница чистых функций(immmuttable, pure) и функций с побочным эффектом(muttable)? Приведите примеры?
+          </div>
+          <div class="answer">
+            Чистые функции ничего не изменяют, а возвращают результат.
+            Например:
+            <code>
+var s = 'hello'
+s.slice(0,4) // 'hell'
+s // 'hello'
+            </code>
+            A функций с побочным эффектом(muttable) могут вносить изменения в уже объявленные переменные.
+            Например:
+            <code>
+var arr = []
+arr.push(3)
+arr // [3]
+            </code>
+          </div>
+        </li>
+        <li>
+          <div class="question">
+            В чем разница между синхронными и асинхронными функциями в браузере?
+          </div>
+          <div class="answer">
+            Синхронные выполняются в потоке, по порядку, то есть следуйщая функция не запустится пока не завершится предыдущая.
+            Асинхронные выполняются параллельно, то есть следующая функция запустится не дожидаясь выполнения предыдущей.
+          </div>
+        </li>
+        <li>
+          <div class="question">
+            Придерживаетесь ли вы стилю кода? какие знаете стандарты? какой предпочитаете?
+          </div>
+          <div class="answer">
+            Для JS: Airbnb(самый популярный), Google, JS(Используют в NPM, Github, mongoDB, ZenDesk)
+          </div>
+        </li>
+        <li>
+          <div class="question">
+            Что можете рассказать про Vue JS?
+          </div>
+          <div class="answer">
+            (Послушать его версию, опытному разработчику будет что сказать, и понять нравится ли он ему — должен).
+          </div>
+        </li>
+        <li>
+          <div class="question">
+            Как реализовать двухсторонний биндинг в Vue JS?
+          </div>
+          <div class="answer">
+            Передать переменную в props, присвоить её значение локальной переменной, и при изменении локальной посылать всплывающее событии, по которому будет обновляться переменная переданная в props
+            <code>
+&lttemplate>
+  &ltcounter initialCount="count" @update="updateCount">&lt/counter>
+&lt/template>
+&ltscript>
+export default {
+  components: {
+    'counter': {
+      template:"&lttemplate>
+                  &ltbutton @click="count++">{{count}}&lt/button>
+                &lt/template>"
+      props: ['initialCount'],
+      data: function () {
+        return {
+          count: this.initialCount
+        }
+      },
+      watch: {
+        count: function () {
+          this.$emit('update', this.count)
+        }
+      }
+    }
+  },
+  data: function () {
+    return {
+      count: 0
+    }
+  },
+  methods: {
+    updateCount: function (count) {
+      this.count = count
+    }
+  }
+}
+&lt/script>
+            </code>
+          </div>
+        </li>
+      </ol>
+    </header>
+    <main>
+      
+    </main>
+  </article>
+  <article id="HTML">
+    <h2>HTML</h2>
+    <main>
+      <ol>
+        <li>
+          <div class="question">Какие спецификации HTML вы знаете? какую предпочитаете и почему? опишите различия на примере тега main?</div>
+          <div class="answer">
+            W3C, WHATWG. 
+            W3C - назависимая группа. Стандарты HTML4.1 -> XHTML -> ^(от HTML 5 WHATWG) -> HTML 5.1 (Нумеруют стандарты, помогая определить уровень поддержки браузерами)
+            WHATWG - группа разработчиков браузеров, огранизована на базе W3C. ^(XHTML от W3C) -> HTML 5 -> HTML (отказались от нумерации, приняв живой стандарт)
+            Спецификация WHATWG не наделяет тэг main какой-либо семантикой и описывает элемент как контейнер для главенствующего содержания какого либо элемента. Также, согласно WHATWG, вам не запрещается иметь на одной странице несколько элементов main. Если у вас имеется несколько article элементов на странице, то вы можете выделить главенствующее содержимое каждого article с помощью тэга main.
+            Спецификация W3C описывает элемент как главное содержание страницы, то есть контент, который описывает основную тему страницы или является ключевым элементом функциональности приложения. В спецификации также говорится, что на странице не может быть больше одного main элемента.
+          </div>
+        </li>
+      </ol>
+    </main>
+  </article>
+  <article id="CSS">
+    <h2>CSS</h2>
+    <main>
+      
+    </main>
+  </article>
+</body>
+</html>
+<style>
+body {
+  position: relative;
+}
+body > nav {
+  position: absolute;
+  left: 0;
+  top: 0;
+}
+body > article {
+  width: 600px;
+  margin: 0 auto;
+}
+code {
+  display: block;
+  overflow: auto;
+  font-family: monospace;
+  white-space: pre;
+  border: 1px solid #ccc;
+  padding: 20px;
+  background-color: #383838;
+  color: #6e9cbe;
+  margin-top: 10px;
+  margin-bottom: 10px;
+}
+.question {
+  font-weight: bold;
+}
+.answer {
+  margin-top: 30px;
+  margin-bottom: 30px;
+}
+</style>
